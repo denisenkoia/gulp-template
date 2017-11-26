@@ -1,0 +1,22 @@
+// ---- mixin ---- //
+
+@mixin font ($font-s, $font-h, $font-c) {
+  font-size: $font-s;
+  line-height: $font-h;
+  color: $font-c;
+}
+
+@mixin transition_01 ($prop, $dur) {
+  transition-property: $prop;
+  transition-duration: $dur;
+}
+
+@mixin transition_02 ($prop_01, $prop_02, $dur) {
+  transition-property: $prop_01, $prop_02;
+  transition-duration: $dur;
+}
+
+@mixin transition_03 ($prop_01, $prop_02, $prop_03, $dur) {
+  transition-property: $prop_01, $prop_02, $prop_03;
+  transition-duration: $dur;
+}

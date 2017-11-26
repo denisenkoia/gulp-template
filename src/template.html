@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ page.title if page.title else "Title" }}</title>
+    <link rel="stylesheet" type="text/css" href="./assets/css/main.css">
+</head>
+<body class="body {{ page.bodyClass if page.bodyClass }}">
+
+<!-- header -->
+    {% import 'src/templates/_tmpl-header.html' as header %}
+    {{ header.headerPage( page.page, page.headerClass ) }}
+<!------------->
+
+<!-- content -->
+    {% block content %}
+    {% endblock %}
+<!------------->
+
+<!-- footer -->
+    {% include 'src/templates/_block-footer.html' %}
+<!------------->
+
+<!-- scripts -->
+    <script type="text/javascript" src="./assets/js/common.js"></script>
+    {% block scripts %}
+    {% endblock %}
+<!------------->
+
+</body>
+</html>
