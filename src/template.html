@@ -13,22 +13,22 @@
 <!-- header -->
     {% import 'src/templates/_tmpl-header.html' as header %}
     {{ header.headerPage( page.page, page.headerClass ) }}
-<!------------->
+<!-- end header -->
 
 <!-- content -->
     {% block content %}
     {% endblock %}
-<!------------->
+<!-- end content -->
 
 <!-- footer -->
     {% include 'src/templates/_block-footer.html' %}
-<!------------->
+<!-- end footer -->
 
 <!-- scripts -->
     <script type="text/javascript" src="./assets/js/common.js"></script>
     {% block scripts %}
     {% endblock %}
-<!------------->
+<!-- end script -->
 
 </body>
 </html>
