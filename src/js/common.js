@@ -1,5 +1,5 @@
-import $ from 'jquery'; // const $ = require('jquery');
-import Vue from 'vue';
+// import $ from 'jquery'; // const $ = require('jquery');
+// import Vue from 'vue';
 
 require('./_newScrpt.js');
 

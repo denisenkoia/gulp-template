@@ -1,5 +1,5 @@
-import $ from 'jquery';
+import $ from './../././././././.././././/././.jquery';
 
-$(document).ready(function () {
-  console.log("newScript.js");
-});
+// $(document).ready(function () {
+  // console.log("newScript.js");
+// });

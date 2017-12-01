@@ -1,4 +1,5 @@
 const gulp = require('gulp'),
+  fs = require('fs'),
   del = require('del'),
   sourcemaps = require('gulp-sourcemaps'),
   gutil = require('gulp-util'),
@@ -71,15 +72,32 @@ gulp.task('build', ['clean'], function (callback) {
   });
 
   gulp.task('script', function () {
-    return browserify({
+    var filesObject = {
+      path: "",
+      fileString: ""
+    };
+
+    function scriptError() {
+      return fs.readFile(filesObject.path, function (err, data) {
+          console.log(data.toString());
+          // return data.toString();
+      })
+    }
+
+    var $browserify = browserify({
       entries: projectSettings.src.js,
       debug: true
     })
-      .transform(babelify, {
+
+    $browserify.pipeline.on('file', function (file) {
+      filesObject.path = file;
+    })
+
+    return $browserify.transform(babelify, {
         "presets": ["es2015"]
       })
       .bundle().on('error', function (err) {
-        gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err));
+      gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err + '\n' + scriptError()));
       })
       .pipe(source(projectSettings.jsBundle))
       .pipe(gulp.dest(projectSettings.dev.js))
@@ -118,9 +136,10 @@ gulp.task('watch', ['build'], function () {
       .transform(babelify, {
         "presets": ["es2015"]
       })
-      .bundle().on('error', function (err) {
-      gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err));
-    })
+      .bundle()
+      .on('error', function (err) {
+        gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err));
+      })
       .pipe(source(projectSettings.jsBundle))
       .pipe(gulp.dest(projectSettings.dev.js))
       .on('end', function () {

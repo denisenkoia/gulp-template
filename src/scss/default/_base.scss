@@ -7,26 +7,13 @@
 // ---- end animation ---- //
 
 
-// ---- fonts ---- //
-
-//@font-face {
-// 	font-family: 'Seravek';
-// 	src: url('../fonts/Seravek/Seravek-Light.ttf') format('truetype');
-// 	font-weight: 300;
-// 	font-style: normal;
-//}
-
-// ---- end fonts ---- //
-
 // ---- global ---- //
 
-//*, body {
-// 	font-family: $base-font-family;
-// 	font-size: $base-font-size;
-// 	color: $base-color-text;
-// 	font-weight: 300;
-// 	line-height: 120%;
-//}
+*, body {
+	font-family: $roboto-reg;
+	font-size: $f-size;
+	color: $col;
+}
 
 // ---- end global ---- //
 
