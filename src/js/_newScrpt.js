@@ -1,5 +1,6 @@
-import $ from './../././././././.././././/././.jquery';
+import $ from 'jquery';
+// import Vue from 'vue';
 
-// $(document).ready(function () {
-  // console.log("newScript.js");
-// });
+$(document).ready(function () {
+  console.log("newScript.js");
+});

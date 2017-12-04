@@ -28,7 +28,7 @@ const projectSettings = {
     watchJs: './src/js/**/*.js',
     scss: './src/scss/**/*.scss',
     assets: './src/assets/**/*',
-    watchAssets: './src/assets/**/*.*'
+    watchAssets: './src/assets/**/*'
   },
   dev: {
     folder: './dev',
@@ -46,17 +46,21 @@ gulp.task('clean', function () {
 gulp.task('build', ['clean'], function (callback) {
 
   gulp.task('html', function () {
+    var filePath;
     return gulp.src(projectSettings.src.html)
+      .on('data', function (file) {
+        filePath = file.path;
+      })
       .pipe(data(function () {
         return require(projectSettings.src.db)
       }))
       .pipe(nunjucksRender().on('error', function (err) {
-        gutil.log(gutil.colors.red.bold('ERROR HTML: \n' + err));
+        gutil.log(gutil.colors.red.bold('ERROR HTML: \n' + err + '\n FILE: ' + filePath));
       }))
       .pipe(inline({
         attribute: projectSettings.inlineAttribute
       }).on('error', function (err) {
-        gutil.log(gutil.colors.red.bold('ERROR HTML Inline: \n' + err));
+        gutil.log(gutil.colors.red.bold('ERROR HTML Inline: \n' + err.message + '\n FILE: ' + filePath));
       }))
       .pipe(htmlbeautify({'max_preserve_newlines': 0}))
       .pipe(gulp.dest(projectSettings.dev.folder))
@@ -72,32 +76,19 @@ gulp.task('build', ['clean'], function (callback) {
   });
 
   gulp.task('script', function () {
-    var filesObject = {
-      path: "",
-      fileString: ""
-    };
-
-    function scriptError() {
-      return fs.readFile(filesObject.path, function (err, data) {
-          console.log(data.toString());
-          // return data.toString();
-      })
-    }
-
+    var filePath;
     var $browserify = browserify({
       entries: projectSettings.src.js,
       debug: true
     })
-
     $browserify.pipeline.on('file', function (file) {
-      filesObject.path = file;
+      filePath = file;
     })
-
     return $browserify.transform(babelify, {
         "presets": ["es2015"]
       })
       .bundle().on('error', function (err) {
-      gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err + '\n' + scriptError()));
+      gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err + '\nFILE: ' + filePath));
       })
       .pipe(source(projectSettings.jsBundle))
       .pipe(gulp.dest(projectSettings.dev.js))
@@ -129,36 +120,44 @@ gulp.task('watch', ['build'], function () {
   });
 
   gulp.task('watch:script', function () {
-    browserify({
+    var filePath;
+    var $browserify = browserify({
       entries: projectSettings.src.js,
       debug: true
     })
-      .transform(babelify, {
-        "presets": ["es2015"]
-      })
-      .bundle()
-      .on('error', function (err) {
-        gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err));
-      })
-      .pipe(source(projectSettings.jsBundle))
-      .pipe(gulp.dest(projectSettings.dev.js))
-      .on('end', function () {
-        browserSync.reload();
-      });
+    $browserify.pipeline.on('file', function (file) {
+      filePath = file;
+    })
+    $browserify.transform(babelify, {
+      "presets": ["es2015"]
+    })
+    .bundle()
+    .on('error', function (err) {
+      gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err + '\nFILE: ' + filePath));
+    })
+    .pipe(source(projectSettings.jsBundle))
+    .pipe(gulp.dest(projectSettings.dev.js))
+    .on('end', function () {
+      browserSync.reload();
+    });
   });
 
   gulp.task('watch:html', function () {
+    var filePath;
     gulp.src(projectSettings.src.html)
+      .on('data', function (file) {
+        filePath = file.path;
+      })
       .pipe(data(function () {
         return require(projectSettings.src.db)
       }))
       .pipe(nunjucksRender().on('error', function (err) {
-        gutil.log(gutil.colors.red.bold('ERROR HTML: \n' + err));
+        gutil.log(gutil.colors.red.bold('ERROR HTML: \n' + err + '\n FILE: ' + filePath));
       }))
       .pipe(inline({
         attribute: projectSettings.inlineAttribute
       }).on('error', function (err) {
-        gutil.log(gutil.colors.red.bold('ERROR HTML Inline: \n' + err));
+        gutil.log(gutil.colors.red.bold('ERROR HTML Inline: \n' + err.message + '\n FILE: ' + filePath));
       }))
       .pipe(htmlbeautify({'max_preserve_newlines': 0}))
       .pipe(gulp.dest(projectSettings.dev.folder))
