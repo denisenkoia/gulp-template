@@ -13,6 +13,7 @@ const gulp = require('gulp'),
   browserify = require('browserify'),
   source = require('vinyl-source-stream'),
   babelify = require('babelify'),
+  vueify = require('vueify'),
   browserSync = require('browser-sync').create();
 
 
@@ -25,7 +26,7 @@ const projectSettings = {
     html: './src/pages/**/*.html',
     watchHtml: ['./src/**/*.html', './src/db_data.json'],
     js: './src/js/common.js',
-    watchJs: './src/js/**/*.js',
+    watchJs: ['./src/js/**/*.js', './src/js/**/*.vue'],
     scss: './src/scss/**/*.scss',
     assets: './src/assets/**/*',
     watchAssets: './src/assets/**/*'
@@ -84,10 +85,8 @@ gulp.task('build', ['clean'], function (callback) {
     $browserify.pipeline.on('file', function (file) {
       filePath = file;
     })
-    return $browserify.transform(babelify, {
-        "presets": ["es2015"]
-      })
-      .bundle().on('error', function (err) {
+    return $browserify.bundle()
+      .on('error', function (err) {
       gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err + '\nFILE: ' + filePath));
       })
       .pipe(source(projectSettings.jsBundle))
@@ -128,10 +127,7 @@ gulp.task('watch', ['build'], function () {
     $browserify.pipeline.on('file', function (file) {
       filePath = file;
     })
-    $browserify.transform(babelify, {
-      "presets": ["es2015"]
-    })
-    .bundle()
+    $browserify.bundle()
     .on('error', function (err) {
       gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err + '\nFILE: ' + filePath));
     })
