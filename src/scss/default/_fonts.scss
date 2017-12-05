@@ -1,8 +1,16 @@
-@font-face {
-  font-family: 'Roboto-Regular';
-  src: url('../fonts/Roboto-Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+@mixin fontFace($FontName, $FontPathName ) {
+  @font-face {
+    font-family: $FontName;
+    src:	url('/assets/fonts/#{$FontPathName}.eot');
+    src:	url('/assets/fonts/#{$FontPathName}.eot?#iefix') format('embedded-opentype'),
+    url('/assets/fonts/#{$FontPathName}.woff') format('woff'),
+    url('/assets/fonts/#{$FontPathName}.ttf') format('truetype'),
+    url('/assets/fonts/#{$FontPathName}.otf') format("opentype");
+    font-weight: normal;
+    font-style: normal;
+  }
 }
+
+@include fontFace('Roboto-Regular', 'Roboto-Regular');
 
 $roboto-reg: 'Roboto-Regular', Arial, Helvetica, sans-serif;
