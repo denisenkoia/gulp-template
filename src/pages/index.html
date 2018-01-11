@@ -17,11 +17,11 @@
 
     <!--<h1>Home page</h1>-->
     <!--<div>-->
-        @{% include 'src/templates/_block-item.html' %}
+        {% include 'src/templates/_block-item.html' %}
     <!--</div>-->
+    <h1></h1>
 
-
-@{%
+{%
     set testItem = [
         {
             "item": "Item-01"
@@ -33,15 +33,15 @@
 %}
     <!--<div class="block-item">-->
         <!--<ul>-->
-            @{% for item in testItem %}
+            <!-- {% for item in testItem %}
             <li> {{ item.item }} </li>
-            @{% endfor %}
+            {% endfor %} -->
         <!--</ul>-->
     <!--</div>-->
 
     <!--<div id="app"></div>-->
 
 
-    <!--<img inline src="./../assets/img/icon-marker.svg">-->
+    <!-- <img inline src="./../assets/img/icon-marker.svg"> -->
     <!---->
 {% endblock %}

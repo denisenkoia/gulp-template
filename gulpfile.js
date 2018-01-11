@@ -3,9 +3,9 @@ const gulp = require('gulp'),
   del = require('del'),
   sourcemaps = require('gulp-sourcemaps'),
   gutil = require('gulp-util'),
+  watch = require('gulp-watch'),
   runSequence = require('run-sequence'),
   nunjucksRender = require('gulp-nunjucks-render'),
-  data = require('gulp-data'),
   htmlbeautify = require('gulp-html-beautify'),
   inline = require('gulp-inline-source'),
   sass = require('gulp-sass'),
@@ -22,9 +22,8 @@ const projectSettings = {
   jsBundle: 'common.js',
   inlineAttribute: 'inline',
   src: {
-    db: './src/db_data.json',
     html: './src/pages/**/*.html',
-    watchHtml: ['./src/**/*.html', './src/db_data.json'],
+    watchHtml: './src/**/*.html',
     js: './src/js/common.js',
     watchJs: ['./src/js/**/*.js', './src/js/**/*.vue'],
     scss: './src/scss/**/*.scss',
@@ -52,9 +51,6 @@ gulp.task('build', ['clean'], function (callback) {
       .on('data', function (file) {
         filePath = file.path;
       })
-      .pipe(data(function () {
-        return require(projectSettings.src.db)
-      }))
       .pipe(nunjucksRender().on('error', function (err) {
         gutil.log(gutil.colors.red.bold('ERROR HTML: \n' + err + '\n FILE: ' + filePath));
       }))
@@ -104,7 +100,8 @@ gulp.task('build', ['clean'], function (callback) {
 
 gulp.task('watch', ['build'], function () {
 
-  gulp.task('watch:scss', function () {
+  watch(projectSettings.src.scss, function () {
+    gutil.log('Starting [watch:scss] ...');
     gulp.src(projectSettings.src.scss)
       .pipe(sourcemaps.init())
       .pipe(sass({outputStyle: 'compressed'}).on('error', function (err) {
@@ -114,11 +111,13 @@ gulp.task('watch', ['build'], function () {
       .pipe(sourcemaps.write())
       .pipe(gulp.dest(projectSettings.dev.css))
       .on('end', function () {
+        gutil.log('Finished [watch:scss]');
         browserSync.reload();
       });
   });
 
-  gulp.task('watch:script', function () {
+  watch(projectSettings.src.watchJs, function () {
+    gutil.log('Starting [watch:script] ...');
     var filePath;
     var $browserify = browserify({
       entries: projectSettings.src.js,
@@ -134,19 +133,18 @@ gulp.task('watch', ['build'], function () {
     .pipe(source(projectSettings.jsBundle))
     .pipe(gulp.dest(projectSettings.dev.js))
     .on('end', function () {
+      gutil.log('Finished [watch:script]');
       browserSync.reload();
     });
   });
 
-  gulp.task('watch:html', function () {
+  watch(projectSettings.src.watchHtml, function () {
+    gutil.log('Starting [watch:html] ...');
     var filePath;
     gulp.src(projectSettings.src.html)
       .on('data', function (file) {
         filePath = file.path;
       })
-      .pipe(data(function () {
-        return require(projectSettings.src.db)
-      }))
       .pipe(nunjucksRender().on('error', function (err) {
         gutil.log(gutil.colors.red.bold('ERROR HTML: \n' + err + '\n FILE: ' + filePath));
       }))
@@ -158,22 +156,20 @@ gulp.task('watch', ['build'], function () {
       .pipe(htmlbeautify({'max_preserve_newlines': 0}))
       .pipe(gulp.dest(projectSettings.dev.folder))
       .on('end', function () {
+        gutil.log('Finished [watch:html]');
         browserSync.reload();
       });
-  });
+  })
 
-  gulp.task('watch:assets', function () {
+  watch(projectSettings.src.assets, function () {
+    gutil.log('Starting [watch:assets] ...');
     gulp.src(projectSettings.src.watchAssets)
       .pipe(gulp.dest(projectSettings.dev.assets))
       .on('end', function () {
+        gutil.log('Finished [watch:assets]');
         browserSync.reload();
       });
   });
-
-  gulp.watch(projectSettings.src.watchHtml, ['watch:html']);
-  gulp.watch(projectSettings.src.scss, ['watch:scss']);
-  gulp.watch(projectSettings.src.watchJs, ['watch:script']);
-  gulp.watch(projectSettings.src.assets, ['watch:assets']);
 
 });
 
