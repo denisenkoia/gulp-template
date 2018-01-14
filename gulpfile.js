@@ -14,6 +14,7 @@ const gulp = require('gulp'),
   source = require('vinyl-source-stream'),
   babelify = require('babelify'),
   vueify = require('vueify'),
+  uglify = require('gulp-uglifyjs'),
   browserSync = require('browser-sync').create();
 
 
@@ -43,7 +44,7 @@ gulp.task('clean', function () {
   return del(projectSettings.dev.folder)
 });
 
-gulp.task('build', ['clean'], function (callback) {
+gulp.task('build:dev', ['clean'], function (callback) {
 
   gulp.task('html', function () {
     var filePath;
@@ -66,7 +67,7 @@ gulp.task('build', ['clean'], function (callback) {
   gulp.task('scss', function () {
     return gulp.src(projectSettings.src.scss)
       .pipe(sourcemaps.init())
-      .pipe(sass({outputStyle: 'compressed'}))
+      .pipe(sass())
       .pipe(autoprefixer())
       .pipe(sourcemaps.write())
       .pipe(gulp.dest(projectSettings.dev.css))
@@ -98,7 +99,61 @@ gulp.task('build', ['clean'], function (callback) {
 
 });
 
-gulp.task('watch', ['build'], function () {
+gulp.task('build:prod', ['clean'], function (callback) {
+
+  gulp.task('html', function () {
+    var filePath;
+    return gulp.src(projectSettings.src.html)
+      .on('data', function (file) {
+        filePath = file.path;
+      })
+      .pipe(nunjucksRender().on('error', function (err) {
+        gutil.log(gutil.colors.red.bold('ERROR HTML: \n' + err + '\n FILE: ' + filePath));
+      }))
+      .pipe(inline({
+        attribute: projectSettings.inlineAttribute
+      }).on('error', function (err) {
+        gutil.log(gutil.colors.red.bold('ERROR HTML Inline: \n' + err.message + '\n FILE: ' + filePath));
+      }))
+      .pipe(htmlbeautify({'max_preserve_newlines': 0}))
+      .pipe(gulp.dest(projectSettings.dev.folder))
+  });
+
+  gulp.task('scss', function () {
+    return gulp.src(projectSettings.src.scss)
+      .pipe(sass({outputStyle: 'compressed'}))
+      .pipe(autoprefixer())
+      .pipe(gulp.dest(projectSettings.dev.css))
+  });
+
+  gulp.task('script', function () {
+    var filePath;
+    var $browserify = browserify({
+      entries: projectSettings.src.js,
+      debug: false
+    })
+    $browserify.pipeline.on('file', function (file) {
+      filePath = file;
+    })
+    return $browserify.bundle()
+      .on('error', function (err) {
+      gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err + '\nFILE: ' + filePath));
+      })
+      .pipe(source(projectSettings.jsBundle))
+      .pipe(uglify())
+      .pipe(gulp.dest(projectSettings.dev.js))
+  });
+
+  gulp.task('assets', function () {
+    return gulp.src(projectSettings.src.assets)
+      .pipe(gulp.dest(projectSettings.dev.assets))
+  });
+
+  runSequence('html', 'scss', 'script', 'assets', callback);
+
+});
+
+gulp.task('watch', ['build:dev'], function () {
 
   watch(projectSettings.src.scss, function () {
     gutil.log('Starting [watch:scss] ...');
