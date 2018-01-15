@@ -14,6 +14,7 @@ const gulp = require('gulp'),
   source = require('vinyl-source-stream'),
   babelify = require('babelify'),
   vueify = require('vueify'),
+  buffer = require('vinyl-buffer'),
   uglify = require('gulp-uglifyjs'),
   browserSync = require('browser-sync').create();
 
@@ -140,6 +141,7 @@ gulp.task('build:prod', ['clean'], function (callback) {
       gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err + '\nFILE: ' + filePath));
       })
       .pipe(source(projectSettings.jsBundle))
+      .pipe(buffer())
       .pipe(uglify())
       .pipe(gulp.dest(projectSettings.dev.js))
   });
