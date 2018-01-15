@@ -161,7 +161,7 @@ gulp.task('watch', ['build:dev'], function () {
     gutil.log('Starting [watch:scss] ...');
     gulp.src(projectSettings.src.scss)
       .pipe(sourcemaps.init())
-      .pipe(sass({outputStyle: 'compressed'}).on('error', function (err) {
+      .pipe(sass().on('error', function (err) {
         gutil.log(gutil.colors.red.bold(err.message));
       }))
       .pipe(autoprefixer())
