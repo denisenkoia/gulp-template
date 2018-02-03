@@ -31,8 +31,11 @@
     "vueify": "^9.4.1"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "element-closest": "^2.0.2",
     "jquery": "^3.2.1",
-    "vue": "^2.5.8"
+    "vue": "^2.5.8",
+    "whatwg-fetch": "^2.0.3"
   },
   "browserify": {
     "transform": [
