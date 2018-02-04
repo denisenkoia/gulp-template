@@ -1,4 +1,4 @@
-@mixin fontFace($FontName, $FontPathName ) {
+@mixin fontFace($FontName, $FontPathName, $FontWeight) {
   @font-face {
     font-family: $FontName;
     src:	url('/assets/fonts/#{$FontPathName}.eot');
@@ -6,11 +6,11 @@
     url('/assets/fonts/#{$FontPathName}.woff') format('woff'),
     url('/assets/fonts/#{$FontPathName}.ttf') format('truetype'),
     url('/assets/fonts/#{$FontPathName}.otf') format("opentype");
-    font-weight: normal;
+    font-weight: $FontWeight;
     font-style: normal;
   }
 }
 
-@include fontFace('Roboto-Regular', 'Roboto-Regular');
+@include fontFace('Roboto', 'Roboto-Regular', 400);
 
-$roboto-reg: 'Roboto-Regular', Arial, Helvetica, sans-serif;
+$roboto: 'Roboto', Arial, Helvetica, sans-serif;

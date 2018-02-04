@@ -1,5 +1,4 @@
 const gulp = require('gulp'),
-    fs = require('fs'),
     del = require('del'),
     sourcemaps = require('gulp-sourcemaps'),
     gutil = require('gulp-util'),
@@ -11,6 +10,7 @@ const gulp = require('gulp'),
     sass = require('gulp-sass'),
     autoprefixer = require('gulp-autoprefixer'),
     browserify = require('browserify'),
+    watchify = require('watchify'),
     source = require('vinyl-source-stream'),
     babelify = require('babelify'),
     vueify = require('vueify'),
@@ -26,8 +26,7 @@ const projectSettings = {
     src: {
         html: './src/pages/**/*.html',
         watchHtml: ['!./src/js/**/*.html', './src/**/*.html'],
-        js: './src/js/common.js',
-        watchJs: './src/js/**/*',
+        js: ['./src/js/common.js'],
         scss: './src/scss/**/*.scss',
         assets: './src/assets/**/*'
     },
@@ -47,7 +46,7 @@ gulp.task('clean', () => {
 
 gulp.task('html', () => {
     let filePath;
-    return gulp.src(projectSettings.src.html)
+    gulp.src(projectSettings.src.html)
         .on('data', (file) => {
             filePath = file.path;
         })
@@ -71,12 +70,26 @@ gulp.task('script', () => {
     let filePath;
     let $browserify = browserify({
         entries: projectSettings.src.js,
-        debug: !gutil.env.production
+        debug: !gutil.env.production,
+        transform: [babelify, vueify],
+        cache: {},
+        packageCache: {},
+        plugin: [watchify]
     })
     $browserify.pipeline.on('file', (file) => {
         filePath = file;
     })
-    return $browserify.bundle()
+
+    if ( !gutil.env.production ) {
+        $browserify.on('update', bundleJs)
+    }
+
+    return bundleJs();
+
+    function bundleJs() {
+        let start = new Date();
+        console.log('Starting script bundle ...');
+        return $browserify.bundle()
         .on('error', (err) => {
             gutil.log(gutil.colors.red.bold('ERROR SCRIPT: \n' + err + '\nFILE: ' + filePath));
         })
@@ -85,13 +98,17 @@ gulp.task('script', () => {
         .pipe(gutil.env.production ? uglify() : gutil.noop())
         .pipe(gulp.dest(projectSettings.dev.js))
         .on('end', () => {
+            let finish = new Date();
+            let time = ((finish - start)/1000) + ' s';
+            console.log('Finished script script bundle', time);
             browserSync.reload();
         });
+    }
 })
 
 
 gulp.task('scss', () => {
-    return gulp.src(projectSettings.src.scss)
+    gulp.src(projectSettings.src.scss)
         .pipe(gutil.env.production ? gutil.noop() : sourcemaps.init())
         .pipe(sass({outputStyle: (gutil.env.production) ? 'compressed' : ''}).on('error', (err) => {
             gutil.log(gutil.colors.red.bold(err.message));
@@ -106,7 +123,7 @@ gulp.task('scss', () => {
 
 
 gulp.task('assets', () => {
-    return gulp.src(projectSettings.src.assets)
+    gulp.src(projectSettings.src.assets)
         .pipe(gulp.dest(projectSettings.dev.assets))
         .on('end', () => {
             browserSync.reload();
@@ -118,10 +135,6 @@ gulp.task('watch', () => {
 
     watch(projectSettings.src.watchHtml, () => {
         gulp.start('html');
-    });
-
-    watch(projectSettings.src.watchJs, () => {
-        gulp.start('script');
     });
 
     watch(projectSettings.src.scss, () => {
@@ -148,13 +161,13 @@ gulp.task('server', () => {
 
 // dev build "gulp or gulp default"
 // production build "gulp --production or gulp default --production"
-gulp.task('default', ['clean'], () => {
+gulp.task('default', ['clean'], (callback) => {
 
     if (gutil.env.production) {
-        runSequence('html', 'script', 'scss', 'assets');
+        runSequence('html', 'script', 'scss', 'assets', callback);
     }
     else {
-        runSequence('html', 'script', 'scss', 'assets', 'watch', 'server');
+        runSequence('html', 'script', 'scss', 'assets', 'watch', 'server', callback);
     }
 
 });

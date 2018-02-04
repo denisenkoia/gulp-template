@@ -1,0 +1,23 @@
+.header {
+  background-color: #eeeeee;
+  padding: 20px;
+  .header-nav-list {
+    display: flex;
+    align-item: center;
+    .header-nav-item {
+      margin: 0 20px;
+      text-transform: uppercase;
+      font-weight: 600;
+      &_active {
+        color: green;
+      }
+      a {
+        &:hover {
+           color: green;
+        }
+      }
+    }
+  }
+  
+
+}

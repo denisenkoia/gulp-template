@@ -6,12 +6,11 @@
 @import "default/base"; 
 
 
-// @import "pages/new"; 
 // templates
-// @import "templates/header";
-// @import "templates/footer";
-// @import "templates/block-item";
+@import "partials/header";
+@import "partials/footer";
+
 
 // pages
-// @import "pages/page-home";
-// @import "pages/page-about";
+@import "pages/home";
+@import "pages/about";

@@ -11,17 +11,19 @@
 <body class="body {{ page.bodyClass if page.bodyClass }}">
 
 <!-- header -->
-    {% import 'src/templates/_tmpl-header.html' as header %}
+    {% import 'src/partials/_header.html' as header %}
     {{ header.headerPage( page.page, page.headerClass ) }}
 <!-- end header -->
 
 <!-- content -->
-    {% block content %}
-    {% endblock %}
+    <section class="content-wraper">
+        {% block content %}
+        {% endblock %}
+    </section>
 <!-- end content -->
 
 <!-- footer -->
-    {% include 'src/templates/_block-footer.html' %}
+    {% include 'src/partials/_footer.html' %}
 <!-- end footer -->
 
 <!-- scripts -->

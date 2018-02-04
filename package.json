@@ -28,7 +28,8 @@
     "run-sequence": "^2.2.0",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^1.1.0",
-    "vueify": "^9.4.1"
+    "vueify": "^9.4.1",
+    "watchify": "^3.10.0"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -36,11 +37,5 @@
     "jquery": "^3.2.1",
     "vue": "^2.5.8",
     "whatwg-fetch": "^2.0.3"
-  },
-  "browserify": {
-    "transform": [
-      "babelify",
-      "vueify"
-    ]
   }
 }

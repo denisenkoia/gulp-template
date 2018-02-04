@@ -6,12 +6,10 @@ if (document.querySelector('#app') != undefined) {
  	new Vue ({
   		el: '#app',
   		template: '<App/>',
-  		// components: { 
-  		// "test-com":  App 
-  		// },
-  		render: function (createElement) {
+  		render: (createElement) => {
   			return createElement(App);
   		}
 	})
+
  }
 

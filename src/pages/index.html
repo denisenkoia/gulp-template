@@ -9,39 +9,36 @@
 
 {% extends "src/template.html" %}
 
-
-
-
-
 {% block content %}
 
-    <!--<h1>Home page</h1>-->
-    <!--<div>-->
-        {% include 'src/templates/_block-item.html' %}
-    <!--</div>-->
-    <h1></h1>
+    <h1>Home page</h1>
 
-{%
-    set testItem = [
-        {
-            "item": "Item-01"
-        },
-        {
-            "item": "Item-03"
-        }
-    ]
-%}
-    <!--<div class="block-item">-->
-        <!--<ul>-->
-            <!-- {% for item in testItem %}
-            <li> {{ item.item }} </li>
-            {% endfor %} -->
-        <!--</ul>-->
-    <!--</div>-->
+    <div class="block-item">
+        <h3>Inline svg</h3>
+        <div class="svg-wrapper">
+            <img inline src="./../assets/img/icon-marker.svg">
+        </div>
+    </div>
+    
+    <div class="block-item">
+        <h3>Vue components</h3>
+        <div id="app"></div>
+    </div>
 
-    <!--<div id="app"></div>-->
+    
+    <div class="block-item">
+        <h3>Arrow item</h3>
+        {% set testItem = ["Item_02", "Item_02"] %}
 
+        <div>
+            <ul>
+                {% for item in testItem %}
+                    <li> {{ item }} </li>
+                {% endfor %}
+            </ul>
+        </div>
 
-    <!-- <img inline src="./../assets/img/icon-marker.svg"> -->
-    <!---->
-{% endblock %}
+    </div>
+
+{% endblock %}  
+
