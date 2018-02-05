@@ -63,7 +63,7 @@ gulp.task('html', () => {
         .on('end', () => {
             browserSync.reload();
         });
-})
+});
 
 
 gulp.task('script', () => {
@@ -72,9 +72,9 @@ gulp.task('script', () => {
         entries: projectSettings.src.js,
         debug: !gutil.env.production,
         transform: [babelify, vueify],
-        cache: {},
-        packageCache: {},
-        plugin: [watchify]
+        cache: (gutil.env.production) ? '' : {},
+        packageCache: (gutil.env.production) ? '' : {},
+        plugin: (gutil.env.production) ? '' : [watchify]
     })
     $browserify.pipeline.on('file', (file) => {
         filePath = file;
@@ -104,7 +104,7 @@ gulp.task('script', () => {
             browserSync.reload();
         });
     }
-})
+});
 
 
 gulp.task('scss', () => {
@@ -156,7 +156,7 @@ gulp.task('server', () => {
         },
         port: 8080
     });
-})
+});
 
 
 // dev build "gulp or gulp default"
@@ -171,3 +171,21 @@ gulp.task('default', ['clean'], (callback) => {
     }
 
 });
+
+
+// build crash if error in task, example
+
+// gulp.task('task_name', () => {
+
+//     watch('file_path_watch', _tasBuildFunc);
+
+//     return _tasBuildFunc();
+
+//     function _tasBuildFunc() {
+//         return gulp.src('file_path_src')
+//             .pipe(gulp.dest('file_path_dev'))
+//             .on('end', () => {
+//                 browserSync.reload();
+//             });
+//     }
+// });
